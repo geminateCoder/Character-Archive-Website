@@ -1,8 +1,9 @@
 from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from app import app, db, lm, oid
-from .forms import LoginForm,EditForm
-from .models import User
+from .forms import LoginForm,EditForm, RegisterForm
+from .models import User, UserSettings
+from datetime import datetime
 
 @lm.user_loader
 def load_user(id):
@@ -11,6 +12,14 @@ def load_user(id):
 @app.before_request
 def before_request():
     g.user = current_user
+
+@app.before_request
+def before_request():
+    g.user = current_user
+    if g.user.is_authenticated:
+        g.user.last_login_at = datetime.utcnow()
+        db.session.add(g.user)
+        db.session.commit()
 
 @app.route("/")
 def index():
@@ -21,6 +30,7 @@ def index():
 @app.route("/login", methods=['GET','POST'])
 @oid.loginhandler
 def login():
+    error=None
     if g.user is not None and g.user.is_authenticated:
         return redirect(url_for('index'))
     form = LoginForm(request.form)
@@ -36,9 +46,34 @@ def login():
                 error = 'Invalid username or password.'
     return render_template('login.html', form=form, error=error)
 
+@app.route('/register', methods=['GET', 'POST'])   # pragma: no cover
+def register():
+    pageType='register'
+    form = RegisterForm()
+    if form.validate_on_submit():
+        user = User(
+            username=form.username.data,
+            email=form.email.data,
+            password=form.password.data
+
+        )
+        db.session.add(user)
+        user.follow.append(user)
+        user.settings.append(UserSettings(displayname=form.username.data))
+        user.login_count = 1
+        user.current_login_at = datetime.now()
+        user.current_login_ip = request.remote_addr
+        db.session.commit()
+        login_user(user)
+        return redirect(url_for('index'))
+    return render_template('register.html', form=form, page=pageType)
 
 @app.route('/logout')
 def logout():
+    user = current_user
+    user.last_login_at = datetime.now()
+    user.last_login_ip = request.remote_addr
+    db.session.commit()
     logout_user()
     return redirect(url_for('index'))
 

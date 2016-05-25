@@ -202,7 +202,7 @@ class CreateC(Form):
 def before_request():
     g.user = current_user
     if g.user.is_authenticated:
-        g.user.last_seen = datetime.utcnow()
+        g.user.last_login_at = datetime.utcnow()
         db.session.add(g.user)
         db.session.commit()
 
