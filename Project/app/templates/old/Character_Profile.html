@@ -1,0 +1,64 @@
+{% extends "/main_skeleton.html" %}
+
+
+{% block title %}{{ character.firstname }} || Profile{% endblock %}
+
+{% block userImg %}<img src={{ user.img }} />{% endblock %}
+
+
+{% block content %}
+
+
+<h1>BASIC INFO</h1>
+<b>NAME:</b> {{ character.firstname }} {{ character.lastname }}<br>
+<b>NICKNAME:</b> {{ character.nickname }}<br>
+<b>AGE:</b> {{ character.age }}<br>
+<b>DATE OF BIRTH:</b> {{ character.birthday }} <br>
+<b>STATUS:</b> {{ character.status }}<br>
+<b>SEXUALITY:</b> {{ character.sexual }}<br>
+<b>OCCUPATION:</b> {{ character.occup }}<br>
+<b>CURRENT RESIDENCE:</b> {{ character.residence }}<br>
+
+
+<h1>OOC</h1>
+{% if user.displayname != none %}
+<b>NAME:</b> {{ user.displayname }}<br>
+{% endif %}
+{% if user.age != none %}
+<b>AGE:</b> {{ user.age }}<br>
+{% endif %}
+{% if user.exp != none %}
+<b>EXPERIENCE:</b> {{ user.exp }}<br>
+{% endif %}
+{% if user.contact != none %}
+<b>CONTACT:</b> {{ user.contact }}<br>
+{% endif %}
+{% if user.style != none %}
+<b>STYLE:</b> {{ user.style }}<br>
+{% endif %}
+{% if user.timezone != none %}
+<b>TIME ZONE:</b> {{ user.timezone }}
+{% endif %}
+
+<h1>PERSONALITY</h1>
+<b>LIKES:</b> {{ character.likes }}<br>
+<b>DISLIKES:</b> {{ character.dislikes }}<br><br>
+
+{{ character.person }}
+
+<br><br>
+<h1>APPEARANCE</h1>
+<b>HEIGHT:</b> {{ character.height }}<br>
+<b>WEIGHT:</b> {{ character.weight }}<br>
+<b>HAIR:</b> {{ character.hair }}<br>
+<b>EYES:</b> {{ character.eyes }}<br><br>
+
+
+{{ character.appear }}
+
+<br><br>
+<h1>HISTORY</h1>
+
+{{ character.about }}
+
+{% endblock %}

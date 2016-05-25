@@ -1,0 +1,155 @@
+{% extends "/main_skeleton.html" %}
+{% block custom_css %}<link href="{{ url_for('static',filename='dash.css') }}" rel='stylesheet' type='text/css'>{% endblock %}
+
+{% block title %}Dashboard{% endblock %}
+{% block profileL %}<li><a href="/profile/{{ userInfo.username }}">Or</a></li>{% endblock %}
+
+{% block userImg %}<img src={{ userInfo.img }} />{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top:40px; padding-left:60px;">
+
+<div class="col-lg-4">
+    <div class="dash-unit">
+        <dtitle>{{ current_user.username }} Profile</dtitle>
+        <hr>
+        <div class="photoCon">
+            <center><img src={{ userInfo.img }} width="200" height="200"></center>
+        </div><!-- /thumbnail -->
+        <h1>
+        	{{ userInfo.displayname }}
+		</h1>
+
+    </div>
+</div>
+      <!-- DONUT CHART BLOCK -->
+        <div class="col-lg-3">
+      		<div class="dash-unit chara">
+		  		<dtitle>Characters</dtitle>
+		  		<hr>
+      		<div class="framemail">
+    			<div class="window">
+			        <ul class="mail">
+
+						{% for character in Chara %}
+						<li>
+			                <i class="unread"></i>
+			                <img class="avatar" src={{ character.img }} alt="avatar">
+			                <p class="sender" style="font-size:12px;">{{ character.firstname }} {{ character.lastname }}</p>
+			                <p class="message" style="font-size:12px;"><strong>Gender | Age | Species</strong></p>
+			                <div class="actions">
+			                    <a><img src="http://findicons.com/files/icons/772/token_light/64/writing.png" alt="label">✎</a>
+			                    <a href="/delete/{{ character.id }}"><img src="http://png-4.findicons.com/files//icons/2232/wireframe_mono/16/trash.png" alt="delete"></a>
+			                </div>
+						</li>
+
+    					{% endfor %}
+					</ul>
+					</div>
+				</div>
+			</div>
+        </div>
+
+      <!-- DONUT CHART BLOCK -->
+
+        <div class="col-sm-4">
+
+      <!-- LOCAL TIME BLOCK -->
+      		<div class="half-unit">
+	      		<dtitle>News</dtitle>
+	      		<hr>
+
+			</div>
+
+      <!-- SERVER UPTIME -->
+			<div class="half-unit" style="overflow-x:auto; overflow-y:hidden;">
+				<div style="width:1620px;">
+					<dtitle>Recent Characters</dtitle>
+	      		<hr>
+
+						{% for chara in allChara %}
+
+								<div class="rchara">
+									<img src={{ chara.img }} width="60" height="60" alt="">
+									<div class="rcharai">
+									<a href="/profile/{{ chara.username }}"><div class="p2" style="background-color:blue;">{{ chara.username }}</div></a>
+									<a href="#"><div class="p2" style="background-color:green;">Fandom</div></a>
+									<a href="/character/profile/{{ chara.id }}"><div class="p2" style="background-color:red;">Profile</div></a>
+									</div>
+								<p>{{ chara.firstname }}</p>
+								</div>
+
+						{% endfor %}
+				</div>
+
+
+			</div>
+
+        </div>
+
+        <div class="col-lg-4">
+       <!-- MAIL BLOCK -->
+      		<div class="dash-unit">
+      		<dtitle>Notification (#)</dtitle>
+      		<hr>
+      		<div class="framemail">
+    			<div class="window">
+			        <ul class="mail">
+			            <li>
+			                <i class="unread"></i>
+			                <img class="avatar" src="http://i.imgur.com/izA5ZAg.png" alt="avatar">
+			                <p class="sender">Adam W.</p>
+			                <p class="message"><strong>♥</strong> - Liked your character!</p>
+			                <div class="actions">
+			                    <a><img src="http://png-1.findicons.com/files//icons/2232/wireframe_mono/16/undo.png" alt="reply"></a>
+			                    <a><img src="http://png-1.findicons.com/files//icons/2232/wireframe_mono/16/star_fav.png" alt="favourite"></a>
+			                    <a><img src="http://png-4.findicons.com/files//icons/2232/wireframe_mono/16/tag.png" alt="label"></a>
+			                    <a><img src="http://png-4.findicons.com/files//icons/2232/wireframe_mono/16/trash.png" alt="delete"></a>
+			                </div>
+			            </li>
+
+			        </ul>
+    			</div>
+			</div>
+		</div><!-- /dash-unit -->
+    </div><!-- /span3 -->
+
+	  <!-- GRAPH CHART - lineandbars.js file -->
+        <div class="col-lg-4">
+      		<div class="dash-unit">
+      		<dtitle>Favorite Characters</dtitle>
+      		<hr>
+				<ul>
+					<li>Saved Character</li>
+				</ul>
+			</div>
+        </div>
+
+	  <!-- LAST MONTH REVENUE -->
+        <div class="col-sm-3 col-lg-3">
+      		<div class="dash-unit">
+	      		<dtitle>Character Stats</dtitle>
+	      		<hr>
+	      		<div class="cont"><center>
+					<p class="stats"  style="color:red">{{ cCount }} | ✦ Characters</p>
+					<br>
+					<p class="stats" style="color:green"># | ♥ Liked</p>
+					<br>
+					<p class="stats" style="color:yellow"># | ★ Favorited</p>
+					<br>
+					<p>You have # of cool points!</p>
+				</center>
+				</div>
+
+			</div>
+        </div>
+</div>
+
+
+{% endblock %}
+<script type=text/javascript>
+  var jug = new Juggernaut();
+  jug.subscribe('channel', function(data) {
+    alert('Got message: ' + data);
+  });
+</script>

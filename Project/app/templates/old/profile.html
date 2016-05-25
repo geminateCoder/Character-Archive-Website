@@ -1,0 +1,28 @@
+{% extends "/main_skeleton.html" %}
+
+
+{% block title %}|| Profile{% endblock %}
+
+
+
+{% block content %}
+  
+	<h1>{{ user.username }} - Profile</h1>
+
+						{% for character in characters %}
+
+			                <img width="100" height="100" src='/{{ character.img }}' alt="avatar">
+			                <p class="sender" style="font-size:12px;">{{ character.firstname }} {{ character.lastname }}</p>
+
+						<br />
+    					{% endfor %}
+{% for follower in follow %}
+{{ follow }}
+{% endfor %}
+{{ y }}
+
+
+
+<a href="{{ url_for('follows', user_id= user.username) }}" > Follow</a>
+<a href="{{ url_for('unfollows', user_id= user.username) }}" > unFollow</a>
+{% endblock %}

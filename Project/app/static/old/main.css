@@ -1,0 +1,120 @@
+
+.content{
+    display:block;
+    min-height:700px;
+}
+
+.cnt {
+	position:relative;
+	margin:auto;
+	top:50px;
+	width:700px;
+	height:500px;
+	background-color:#85888c;
+	-webkit-border-radius: 20px;
+	-moz-border-radius: 20px;
+	border-radius: 20px;
+}
+
+.info {
+	background-color:#8f9296;
+	margin-left:4%;
+	height: 400px;
+	overflow-y:auto;
+}
+
+.recent {
+	background-color:gray;
+	margin:auto;
+	height:400px;
+
+}
+
+.rcol1{
+	position:fixed;
+	display:inline-block;
+	width:30px;
+	height:100%;
+	right:17px;
+
+}
+
+.rcol2{
+	right:30px;
+	height:100%;
+	left:25px;
+	
+}
+
+.rcol2 img{
+	border:1px solid #292c2f
+}
+
+.rcol2 span{
+}
+
+
+.recentc{
+    margin-top:10px;
+    text-align:center;
+    display:inline-block;
+    background-color:#505050;
+    width:100px;
+    height:100px;
+}
+.recentc .cname{
+    position:absolute;
+    color:white;
+    background-color: black;
+    opacity:0.9;
+    width:100px;
+}
+.recentc img{
+    border: black solid 2px;
+    width:100px;
+    height:100px;
+}
+.recenti{
+    margin-top:-70px;
+    font-size: 10px;
+    color:white;
+    display:inline-block;
+    opacity:0;
+}
+
+.recentc:hover .recenti{
+    opacity:1;
+}
+.recenti a{
+    decoration:none;
+    color:white;
+}
+
+.recenti a:hover{
+    decoration:none;
+    color:white;
+}
+@media (max-device-width: 1060px) {
+
+}
+
+@media (max-device-width: 1024px) {
+
+}
+
+@media (max-width: 736px) {
+
+
+
+
+	
+}
+
+
+@media (max-width: 320px) {
+
+
+
+
+
+}

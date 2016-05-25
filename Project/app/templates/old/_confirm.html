@@ -1,0 +1,20 @@
+{% extends "/main_skeleton.html" %}
+{% block custom_css %}<link href="{{ url_for('static',filename='CreateC.css') }}" rel='stylesheet' type='text/css'>{% endblock %}
+
+
+{% block title %}RPGrounds BETA{% endblock %}
+
+
+
+{% block content %}
+
+<div class="dash-unit login" style="width:500px; height:200px;">
+    <h1>{{ desc }}</h1>
+    <form action="{{ action_url }}" method="GET"><br/>
+        <input type="hidden" name="confirm" value="1">
+        <center><input type="submit" value="Yes">
+    </form>
+<br/>
+    <a href="/dashboard">No Thank you</a>
+    </div></center>
+{% endblock %}

@@ -1,0 +1,577 @@
+from flask import Flask, Response, abort, render_template, url_for, flash, request, redirect, session
+import sqlalchemy
+from flask_sqlalchemy import SQLAlchemy
+from flask.ext.security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, login_required
+from flask.ext.login import LoginManager, UserMixin, login_required, login_user, logout_user
+from flask_wtf import Form
+from wtforms import TextField
+from wtforms.validators import DataRequired, Length
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:lo2erlo2er@localhost/social'
+app.config['SECRET_KEY'] = 'super-secret'
+app.debug = True
+db = SQLAlchemy(app)
+app.secret_key = "my precious"
+
+
+# flask security
+app.config['SECURITY_CONFIRMABLE'] = False
+app.config['SECURITY_REGISTERABLE'] = False
+app.config['LOGIN_DISABLED'] = True
+app.config['SECURITY_RECOVERABLE'] = True
+app.config['SECURITY_TRACKABLE'] = True
+app.config['SECURITY_PASSWORD_HASH'] = 'bcrypt'
+app.config['SECURITY_PASSWORD_SALT'] = '32$543hd#fse%3rt4rt54y-ret'
+
+# flask-login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
+
+# Define models
+roles_users = db.Table('roles_users',
+        db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
+        db.Column('role_id', db.Integer(), db.ForeignKey('role.id')))
+
+class Role(db.Model, RoleMixin):
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(255), unique=True)
+    description = db.Column(db.String(255))
+
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(255), unique=True)
+    email = db.Column(db.String(255), unique=True)
+    password = db.Column(db.String(255))
+    displayname = db.Column(db.String(255))
+    active = db.Column(db.Boolean())
+    confirmed_at = db.Column(db.DateTime())
+    roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users', lazy='dynamic'))
+    last_login_at = db.Column(db.DateTime())
+    current_login_at = db.Column(db.DateTime())
+    last_login_ip = db.Column(db.String(255))
+    current_login_ip = db.Column(db.String(255))
+    login_count = db.Column(db.Integer)
+
+# Setup Flask-Security
+user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+security = Security(app, user_datastore)
+
+
+
+@app.route("/")
+def index():
+    pageType='index'
+    return render_template("index.html", page=pageType)
+
+@app.route("/login/", methods=['GET','POST'])
+def login():
+    pageType='login'
+    error=""
+    try:
+        if request.method == "POST":
+            attempted_username = request.form['username']
+            attempted_password = request.form['password']
+
+            flash(attempted_username)
+            flash(attempted_password)
+
+            if attempted_username == "admin" and attempted_password == "password":
+                return redirect(url_for('dash'))
+            else:
+                error = "Invalid login"
+
+
+        return render_template("login.html", error=error)
+
+    except Exception as e:
+        flash(e)
+        return render_template("login.html", error=error)
+
+
+@app.route("/register")
+def register():
+    pageType='register'
+    return render_template("register.html", page=pageType)
+
+
+@app.route("/post_user", methods=['POST'])
+def post_user():
+    user = User(request.form.get('username'), request.form.get('email'))
+    db.session.add(user)
+    db.session.commit()
+    return redirect(url_for('index'))
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return Response('<p>Logged out</p>')
+
+# Define models
+follower = db.Table('favorite',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.username')),
+    db.Column('character_id', db.Integer, db.ForeignKey('Character.id'))
+)
+
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer(), primary_key=True)
+    username = db.Column(db.String(255), unique=True)
+    email = db.Column(db.String(255), unique=True)
+    password = db.Column(db.String(255))
+    settings = db.relationship('UserSettings', backref='user', lazy='dynamic')
+    last_login_at = db.Column(db.DateTime())
+    current_login_at = db.Column(db.DateTime())
+    last_login_ip = db.Column(db.String(255))
+    current_login_ip = db.Column(db.String(255))
+    login_count = db.Column(db.Integer)
+
+class UserSettings(db.Model, UserMixin):
+    id = db.Column(db.Integer(), primary_key=True)
+    username = db.Column(db.String(255), db.ForeignKey('user.username'))
+    displayname = db.Column(db.String(255))
+    age = db.Column(db.Integer, primary_key=False)
+    gender = db.Column(db.String(255))
+    sign = db.Column(db.String(255))
+    timezone = db.Column(db.String(255))
+    cpoints = db.Column(db.Integer(), primary_key=False) #coolpts
+    status = db.Column(db.String(255))
+    pref = db.Column(db.String(255))
+    exp = db.Column(db.String(255))
+    style = db.Column(db.String(255))
+    contact = db.Column(db.String(255))
+    about = db.Column(db.Text(length=None))
+    img = db.Column(db.String(255),default="/static/img/default_image.png")
+
+class Character(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(255))
+    firstname = db.Column(db.String(255),default="")
+    lastname = db.Column(db.String(255),default="")
+    nickname = db.Column(db.String(255))
+    age = db.Column(db.Integer, primary_key=False)
+    gender = db.Column(db.String(255))
+    birthday = db.Column(db.Date)
+    sign = db.Column(db.String(255))
+    sexual = db.Column(db.String(255))
+    occup = db.Column(db.String(255))
+    residence = db.Column(db.String(255))
+    height = db.Column(db.String(255))
+    weight = db.Column(db.String(255))
+    hair = db.Column(db.String(255))
+    eyes = db.Column(db.String(255))
+    status = db.Column(db.String(255))
+    likes = db.Column(db.String(255))
+    dislikes = db.Column(db.String(255))
+    person = db.Column(db.Text(length=None))
+    appear = db.Column(db.Text(length=None))
+    about = db.Column(db.Text(length=None))
+    theme = db.Column(db.String(255))
+    url = db.Column(db.String(255))
+    img = db.Column(db.String(255),default="/static/img/default_image.png")
+    fallowers = db.relationship('User', secondary=follower, backref=db.backref('followers', lazy='dynamic'))
+    created = db.Column(db.DateTime())
+    points = db.Column(db.Integer, primary_key=False)
+
+
+,
+
+
+      x = User.query.join(follow,
+    (follow.c.follower_id == 3)).filter(follow.c.following_id == username.id).first()
+    followed = x.username
+
+
+
+
+
+
+
+
+
+
+
+
+
+                               secondary=followers,
+                               primaryjoin=(followers.c.follower_id == id),
+                               secondaryjoin=(followers.c.followed_id == id),
+                               backref=db.backref('followers', lazy='dynamic'),
+                               lazy='dynamic')
+@app.route("/profile/<username>")
+def profile(username):
+    pageType='profile'
+    user = User.query.filter_by(username=username).first()
+    return render_template("profile.html", page=pageType, user=user)
+
+
+@app.route("/dashboard/")
+@login_required
+def dash():
+    pageType='dash'
+    return render_template("dashboard.html", page=pageType)
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template("404.html")
+
+
+if __name__ == "__main__":
+
+
+    # Create DB
+    db.create_all()
+
+    # Start app
+    app.run()
+
+
+
+    @app.route("/login/", methods=['GET','POST'])
+@app.route("/login", methods=['GET','POST'])
+def login():
+    pageType='login'
+    error=None
+    try:
+        if request.method == "POST":
+            attempted_username = request.form['username']
+            attempted_password = request.form['password']
+
+
+            if attempted_username == "admin" and attempted_password == "password":
+                session['username'] = True
+                return redirect(url_for('dash'))
+            else:
+                error = "Invalid login"
+
+
+        return render_template("login.html", error=error, page=pageType)
+
+    except Exception as e:
+        flash(e)
+        return render_template("login.html", error=error, page=pageType)
+
+================================
+
+import os
+from flask import Flask, Response, abort, render_template, url_for, flash, request, redirect, session
+import sqlalchemy
+from flask_sqlalchemy import SQLAlchemy
+from flask.ext.security import Security, RoleMixin
+from flask.ext.login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
+from flask.ext.bcrypt import Bcrypt
+from flask_wtf import Form
+from wtforms import TextField, PasswordField
+from wtforms.validators import DataRequired, Length, EqualTo, Email
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:lo2erlo2er@localhost/social'
+app.config['SECRET_KEY'] = 'super-secret'
+app.debug = True
+db = SQLAlchemy(app)
+app.secret_key = "my precious"
+
+# flask security
+#app.config['SECURITY_CONFIRMABLE'] = False
+#app.config['SECURITY_REGISTERABLE'] = False
+app.config['SECURITY_RECOVERABLE'] = True
+app.config['SECURITY_TRACKABLE'] = True
+#app.config['SECURITY_PASSWORD_HASH'] = 'bcrypt'
+#app.config['SECURITY_PASSWORD_SALT'] = '32$543hd#fse%3rt4rt54y-ret'
+bcrypt = Bcrypt(app)
+
+# flask-login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "user.login"
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.filter(User.id == int(user_id)).first()
+
+# Define models
+roles_users = db.Table('roles_users',
+        db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
+        db.Column('role_id', db.Integer(), db.ForeignKey('role.id')))
+
+class Role(db.Model, RoleMixin):
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(255), unique=True)
+    description = db.Column(db.String(255))
+
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(255), unique=True)
+    email = db.Column(db.String(255), unique=True)
+    password = db.Column(db.String(255))
+    displayname = db.Column(db.String(255))
+    active = db.Column(db.Boolean())
+    confirmed_at = db.Column(db.DateTime())
+    roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users', lazy='dynamic'))
+    last_login_at = db.Column(db.DateTime())
+    current_login_at = db.Column(db.DateTime())
+    last_login_ip = db.Column(db.String(255))
+    current_login_ip = db.Column(db.String(255))
+    login_count = db.Column(db.Integer)
+
+# Setup Flask-Security
+#user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+#security = Security(app, user_datastore)
+
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
+    def __repr__(self):
+        return '<name - {}>'.format(self.name)
+
+class RegisterForm(Form):
+    username = TextField(
+        'username',
+        validators=[DataRequired(), Length(min=3, max=25)]
+    )
+    email = TextField(
+        'email',
+        validators=[DataRequired(), Email(message=None), Length(min=6, max=40)]
+    )
+    password = PasswordField(
+        'password',
+        validators=[DataRequired(), Length(min=6, max=25)]
+    )
+    confirm = PasswordField(
+        'Repeat password',
+        validators=[
+            DataRequired(), EqualTo('password', message='Passwords must match.')
+        ]
+    )
+class LoginForm(Form):
+    username = TextField('Username', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+
+@app.route("/")
+def index():
+    pageType='index'
+    return render_template("index.html", page=pageType)
+
+@app.route("/login/", methods=['GET','POST'])
+@app.route("/login", methods=['GET','POST'])
+def login():
+    pageType='login'
+    error = None
+    if request.method == 'POST':
+            user = User.query.filter_by(username=request.form['username']).first()
+            if user is not None and password == bcrypt.generate_password_hash(request.form['password']
+            ):
+                db.session.add(user)
+                db.session.commit()
+                login_user(user)
+                return redirect(url_for('dash'))
+            else:
+                error = 'Invalid username or password.'
+    return render_template('login.html', error=error, page=pageType)
+
+@app.route('/register/', methods=['GET', 'POST'])   # pragma: no cover
+def register():
+    pageType='register'
+    form = RegisterForm()
+    if form.validate_on_submit():
+        pw_salt = 'sa6ds@dwa28s!d23das'
+        user = User(
+            username=form.username.data,
+            email=form.email.data,
+            password=bcrypt.generate_password_hash(form.password.data)
+        )
+        db.session.add(user)
+        db.session.commit()
+        login_user(user)
+        return redirect(url_for('dash'))
+    return render_template('register.html', form=form, page=pageType)
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+
+@app.route("/dashboard/")
+@app.route("/dashboard")
+def dash():
+    pageType='dash'
+
+    return render_template("dashboard.html", page=pageType)
+
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template("404.html")
+
+
+if __name__ == "__main__":
+
+
+    # Create DB
+    #db.create_all()
+
+    # Start app
+    app.run()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     <div class="row" style="top:30px;">
+
+      <!-- USER PROFILE BLOCK -->
+        <div class="">
+      		<div class="dash-unit">
+	      		<dtitle>User Profile</dtitle>
+	      		<hr>
+				<div class="thumbnail">
+					<img src="assets/img/face80x80.jpg" alt="Marcel Newman" class="img-circle">
+				</div><!-- /thumbnail -->
+				<h1>Marcel Newman</h1>
+				<h3>Madrid, Spain</h3>
+				<br>
+					<div class="info-user">
+						<span aria-hidden="true" class="li_user fs1"></span>
+						<span aria-hidden="true" class="li_settings fs1"></span>
+						<span aria-hidden="true" class="li_mail fs1"></span>
+						<span aria-hidden="true" class="li_key fs1"></span>
+					</div>
+				</div>
+        </div>
+      <!-- DONUT CHART BLOCK -->
+        <div class="col-sm-3">
+      		<div class="dash-unit">
+		  		<dtitle>Site Bandwidth</dtitle>
+		  		<hr>
+	        	<div id="load"></div>
+	        	<h2>45%</h2>
+			</div>
+        </div>
+
+      <!-- DONUT CHART BLOCK -->
+
+        <div class="col-sm-3">
+
+      <!-- LOCAL TIME BLOCK -->
+      		<div class="half-unit">
+	      		<dtitle>Local Time</dtitle>
+	      		<hr>
+		      		<div class="clockcenter">
+			      		<digiclock>12:45:25</digiclock>
+		      		</div>
+			</div>
+
+      <!-- SERVER UPTIME -->
+			<div class="half-unit">
+	      		<dtitle>Server Uptime</dtitle>
+	      		<hr>
+	      		<div class="cont">
+					<p><img src="assets/img/up.png" alt=""> <bold>Up</bold> | 356ms.</p>
+				</div>
+			</div>
+
+        </div>
+
+      </div><!-- /row -->
+
+
+
+
+
+
+    	  <!-- SECOND ROW OF BLOCKS -->
+      <div class="row" style="">
+        <div class="col-sm-3 col-lg-3">
+       <!-- MAIL BLOCK -->
+      		<div class="dash-unit">
+      		<dtitle>Inbox (1)</dtitle>
+      		<hr>
+      		<div class="framemail">
+    			<div class="window">
+			        <ul class="mail">
+			            <li>
+			                <i class="unread"></i>
+			                <img class="avatar" src="assets/img/photo01.jpeg" alt="avatar">
+			                <p class="sender">Adam W.</p>
+			                <p class="message"><strong>Working</strong> - This is the last...</p>
+			                <div class="actions">
+			                    <a><img src="http://png-1.findicons.com/files//icons/2232/wireframe_mono/16/undo.png" alt="reply"></a>
+			                    <a><img src="http://png-1.findicons.com/files//icons/2232/wireframe_mono/16/star_fav.png" alt="favourite"></a>
+			                    <a><img src="http://png-4.findicons.com/files//icons/2232/wireframe_mono/16/tag.png" alt="label"></a>
+			                    <a><img src="http://png-4.findicons.com/files//icons/2232/wireframe_mono/16/trash.png" alt="delete"></a>
+			                </div>
+			            </li>
+			            <li>
+			                <i class="read"></i>
+			                <img class="avatar" src="assets/img/photo02.jpg" alt="avatar">
+			                <p class="sender">Dan E.</p>
+			                <p class="message"><strong>Hey man!</strong> - You have to taste ...</p>
+			                <div class="actions">
+			                    <a><img src="http://png-1.findicons.com/files//icons/2232/wireframe_mono/16/undo.png" alt="reply"></a>
+			                    <a><img src="http://png-1.findicons.com/files//icons/2232/wireframe_mono/16/star_fav.png" alt="favourite"></a>
+			                    <a><img src="http://png-4.findicons.com/files//icons/2232/wireframe_mono/16/tag.png" alt="label"></a>
+			                    <a><img src="http://png-4.findicons.com/files//icons/2232/wireframe_mono/16/trash.png" alt="delete"></a>
+			                </div>
+			            </li>
+
+			        </ul>
+    			</div>
+			</div>
+		</div><!-- /dash-unit -->
+    </div><!-- /span3 -->
+
+	  <!-- GRAPH CHART - lineandbars.js file -->
+        <div class="col-sm-3 col-lg-3">
+      		<div class="dash-unit">
+      		<dtitle>Other Information</dtitle>
+      		<hr>
+			    <div class="section-graph">
+			      <div id="importantchart"></div>
+			      <br>
+			      <div class="graph-info">
+			        <i class="graph-arrow"></i>
+			        <span class="graph-info-big">634.39</span>
+			        <span class="graph-info-small">+2.18 (3.71%)</span>
+			      </div>
+			    </div>
+			</div>
+        </div>
+
+	  <!-- LAST MONTH REVENUE -->
+        <div class="col-sm-3 col-lg-3">
+      		<div class="dash-unit">
+	      		<dtitle>Last Month Revenue</dtitle>
+	      		<hr>
+	      		<div class="cont">
+					<p><bold>$879</bold> | <ok>Approved</ok></p>
+					<br>
+					<p><bold>$377</bold> | Pending</p>
+					<br>
+					<p><bold>$156</bold> | <bad>Denied</bad></p>
+					<br>
+					<p><img src="assets/img/up-small.png" alt=""> 12% Compared Last Month</p>
+
+				</div>
+
+			</div>
+        </div>
+</div>

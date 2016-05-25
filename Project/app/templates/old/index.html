@@ -1,0 +1,54 @@
+{% extends "/main_skeleton.html" %}
+
+
+{% block title %}RPGrounds BETA{% endblock %}
+
+
+
+{% block content %}
+
+<div class="container cnt">
+
+
+
+  <center><h1>Hello World!</h1></center>
+  <div class="row">
+    <div class="col-sm-6 info">
+      <h1>Lorem ipsum...</h1>
+	  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum eu orci cursus, elementum ligula et, iaculis orci. Phasellus venenatis tempus condimentum. Sed porttitor erat vel dolor eleifend mattis. In tincidunt sit amet sapien ac tempus. Quisque vulputate, orci quis congue mollis, ante nibh consectetur risus, condimentum ultricies ligula nunc at massa. Sed laoreet urna sed vehicula convallis. Proin massa risus, ultricies vel varius et, porttitor eu nisi. Donec sollicitudin cursus augue, ut facilisis ipsum cursus id. Etiam aliquam euismod viverra. Proin orci purus, blandit ut interdum id, cursus ut sem. Integer ante arcu, pulvinar ac tincidunt vel, interdum eu magna. Sed hendrerit, erat sed semper auctor, ante sapien blandit sem, eget tempor mauris leo at elit.
+
+Nam sit amet feugiat enim. Mauris vitae justo eu quam elementum aliquet. Aliquam facilisis felis quis mi hendrerit aliquet. Donec molestie porttitor quam, et facilisis purus vestibulum efficitur. Proin sollicitudin tellus at mauris congue, nec tempor nisi ornare. Mauris lacus ligula, convallis sed erat a, luctus tincidunt massa. Suspendisse consectetur lorem sapien, ut placerat ante dignissim non. Duis sodales ligula mattis tortor consectetur, quis porttitor sapien placerat. Praesent facilisis mattis arcu a imperdiet. Pellentesque quis viverra tellus.
+</p>
+    </div>
+    <div class="col-sm-5 recent">
+		<div class="rcol1 col-sm-1" style="	background-image: url('static/images/side.png');background-repeat:no-repeat;background-size:100% 100%;">
+		</div>
+
+ 	    <div class="rcol2 col-sm-5" style="position:absolute; width:470px;overflow-y:auto; ">
+
+						{% for character in allChara %}
+
+								<div class="recentc">
+									<p class="cname">{{ character.firstname }}</p>
+									<img src={{ character.img }} width="100" height="100" alt="">
+									<div class="recenti">
+									<a href="#"><p style="background-color:blue;">User</p></a>
+									<a href="#"><p style="background-color:green;">Fandom</p></a>
+									<a href="#"><p style="background-color:red;">Profile</p></a>
+									</div>
+
+								</div>
+						{% endfor %}
+		</div>
+
+
+    </div>
+  </div>
+
+
+
+
+  </div>
+
+
+{% endblock %}

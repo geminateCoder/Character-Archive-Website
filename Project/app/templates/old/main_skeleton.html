@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<title>{% block title %}{% endblock %}</title>
+ 					<!-- fav -->
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="ProgId" content="FrontPage.Editor.Document" />
+	<link rel="icon" href="{{ url_for('static',filename='img/fav.png') }}" type="image/x-icon"/>
+	<link rel="shortcut icon" href="{{ url_for('static',filename='fav.png') }}" type="image/x-icon"/>
+
+	<meta name="description" content="" />
+	<meta name="keywords" content="" />
+	<meta name="robots" content="index,follow" />
+	<link rel="stylesheet" type="text/css" href="styles.css" />
+	<link rel="stylesheet" type="text/css" href="styles.css" />
+	<link href="{{ url_for('static',filename='bootstrap.min.css') }}" rel='stylesheet' type='text/css'>
+	<link href="{{ url_for('static',filename='bootstrap.css') }}" rel='stylesheet' type='text/css'>
+	<link href="{{ url_for('static',filename='footer-basic-centered.css') }}" rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="{{ url_for('static',filename='header-user-dropdown.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static',filename='header-login-signup.css') }}">
+	<link href="{{ url_for('static',filename='login.css') }}" rel='stylesheet' type='text/css'>
+	<script href="{{ url_for('static',filename='js/login_normal.css') }}"></script>
+	<link href='http://fonts.googleapis.com/css?family=Cookie' rel='stylesheet' type='text/css'>
+	<link href="{{ url_for('static',filename='main.css') }}" rel='stylesheet' type='text/css'>
+	{% block custom_css %}{% endblock %}
+</head>
+
+
+<body>
+{% if current_user.is_authenticated %}
+
+<header class="header-user-dropdown">
+
+	<div class="header-limiter">
+		<h1><img src="{{ url_for('static',filename='img/fav.png') }}" width="50"></h1>
+
+		<nav>
+			<a href="/dashboard">Dashboard</a>
+			<a href="/character_create">Create Character</a>
+			<a href="/recent">Recent</a>
+			<a href="/search">Search</a>
+			<a href="/news">News<span class="header-new-feature">new</span></a>
+		</nav>
+
+
+		<div class="header-user-menu">
+
+	{% block userImg %}{% endblock %}
+				<ul>
+					<li><a href="/settings">Settings</a></li>
+				<li><a href="/logout" class="highlight">Logout</a></li>
+			</ul>
+		</div>
+
+	</div>
+
+</header>
+
+{% else %}
+<body>
+<header class="header-login-signup">
+
+	<div class="header-limiter">
+
+		<h1><a href="/"><img src="{{ url_for('static',filename='img/fav.png') }}" width="50"></a></h1>
+
+
+
+
+			<ul>{% if page == 'register' %}
+				<li><a href="/login">Login</a></li>
+				{% elif page == 'login' %}
+				<li><a href="/register">Sign up</a></li>
+				{% elif page == 'index' %}
+				<li><a href="/login">Login</a></li>
+				<li><a href="/register">Sign up</a></li>
+				{% else %}
+				{% endif %}
+			</ul>
+
+	</div>
+	</header>
+{% endif %}
+
+
+
+
+
+<div class="content">
+
+{% block content %}{% endblock %}
+
+</div>
+
+
+  		<footer class="footer-basic-centered">
+
+			<p class="footer-company-motto">The company motto.</p>
+
+			<p class="footer-links">
+				<a href="#">Home</a>
+				·
+				<a href="#">Blog</a>
+				·
+				<a href="#">Pricing</a>
+				·
+				<a href="#">About</a>
+				·
+				<a href="#">Faq</a>
+				·
+				<a href="#">Contact</a>
+			</p>
+
+			<p class="footer-company-name">Company Name &copy; 2015</p>
+
+		</footer>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+</body>
+</html>

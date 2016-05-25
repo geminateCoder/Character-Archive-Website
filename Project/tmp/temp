@@ -1,0 +1,48 @@
+   <center><img src="{{ url_for('static',filename='img/fav.png') }}" width="100px"/></center>
+<form method="post">
+  <fieldset>
+  {{ form.csrf_token }}
+    {{ form.firstname(placeholder="firstname") }}
+      {% if form.firstname.errors %}
+        {% for error in form.firstname.errors %}
+          {{ error }}
+        {% endfor %}
+      {% endif %}
+    {{ form.lastname(placeholder="lastname") }}
+      {% if form.lastname.errors %}
+        {% for error in form.lastname.errors %}
+          {{ error }}
+        {% endfor %}
+      {% endif %}
+  {{ form.age(placeholder="age") }}
+      {% if form.age.errors %}
+        {% for error in form.age.errors %}
+          {{ error }}
+        {% endfor %}
+      {% endif %}
+  {{ form.gender(placeholder="gender") }}
+      {% if form.gender.errors %}
+        {% for error in form.gender.errors %}
+          {{ error }}
+        {% endfor %}
+      {% endif %}
+  {{ form.sign(placeholder="sign") }}
+      {% if form.sign.errors %}
+        {% for error in form.sign.errors %}
+          {{ error }}
+        {% endfor %}
+      {% endif %}
+  {{ form.about(placeholder="about") }}
+      {% if form.about.errors %}
+        {% for error in form.about.errors %}
+          {{ error }}
+        {% endfor %}
+      {% endif %}
+  {{ form.img(placeholder="ImageUrl") }}
+      {% if form.img.errors %}
+        {% for error in form.img.errors %}
+          {{ error }}
+        {% endfor %}
+      {% endif %}
+
+

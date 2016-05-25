@@ -1,0 +1,21 @@
+    if user is None:
+        flash('User %s not found.' % user_id)
+        return redirect(url_for('index'))
+    if user_id == user:
+        flash('You can\'t unfollow yourself!')
+        return redirect(url_for('dash', user_id=user_id))
+    u = user_id.follow.remove(user)
+    if u is None:
+        flash('Cannot unfollow ' + user_id + '.')
+        return redirect(url_for('user', user_id=user_id))
+    db.session.add(u)
+    db.session.commit()
+    flash('You have stopped following ' + user_id + '.')
+    return redirect(url_for('user', user_id=user_id))
+
+
+
+
+    user_id.follow.remove(user)
+  db.session.commit()
+  return render_template('test.html')
