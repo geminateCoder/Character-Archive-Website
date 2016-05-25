@@ -26,6 +26,7 @@ class User(db.Model, UserMixin):
         secondaryjoin = (follow.c.following_id == id),
         backref = db.backref('follow'),
     lazy='dynamic')
+    posts = db.relationship('Post', backref='author', lazy='dynamic')
     last_login_at = db.Column(db.DateTime())
     current_login_at = db.Column(db.DateTime())
     last_login_ip = db.Column(db.String(255))
