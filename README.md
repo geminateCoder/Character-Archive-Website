@@ -1,27 +1,30 @@
 # Character-Archive-Website
 
+![alt text](http://i.imgur.com/GYyqbsO.png "RolePlayGrounds") #subject to change
+
+##Basic Information
 A website designed to save multiple characters at once, give them a profile, and display them for others to find and admire. 
 
-Features include:
-	> Users can have a personal profile for each of their character and themselves.
-	> Users can create as many characters as they wish. #subject to change
-	> The characters recently created will be displayed in the front page
-	> Users can favorite a character to save on their dashboard.
-	> Users can follow/friend other users.
-	> Users can private message other users.
-	> There is stats with # of Characters # of favorited characters # of followers.
-	> . . .
+##Features include:
+* Users can have a personal profile for each of their character and themselves.
+* Users can create as many characters as they wish. #subject to change
+* The characters recently created will be displayed in the front page
+* Users can favorite a character to save on their dashboard.
+* Users can follow/friend other users.
+* Users can private message other users.
+* There is stats with # of Characters # of favorited characters # of followers.
+* . . .
 	
-Pages: 
-The -Index- page should have a header with a login and sign up button on floating to the left of the screen. There needs to be a section where it will display recent characters with links that will display once a user hovers over the character image. Login and Signup buttons pops out on the page.
+##Pages: 
+* The *Index* page should have a header with a login and sign up button on floating to the left of the screen. There needs to be a section where it will display recent characters with links that will display once a user hovers over the character image. Login and Signup buttons pops out on the page.
 
-The -Login- and -Signup- page will be made just as a procaution. Login Form should only have username and password. Sighn up Form should have username, email, password, and confim password.
+* The *Login* and -Signup- page will be made just as a procaution. Login Form should only have username and password. Sighn up Form should have username, email, password, and confim password.
 
-The -Dashboard- page is only accessable if a user has logged into the session. There will be their image on the right of the screen. There should be a notification/character/recent characters/favorted/stats/friend-followed/news section on the dashboard. The header should change if user is in session to a small avatar image with a dropdown that will have the settings page and the logout link.
+* The *Dashboard* page is only accessable if a user has logged into the session. There will be their image on the right of the screen. There should be a notification/character/recent characters/favorted/stats/friend-followed/news section on the dashboard. The header should change if user is in session to a small avatar image with a dropdown that will have the settings page and the logout link.
 
 
 
-# Files
+##Files
     Character-Archive-Website\
       .idea\+includes\+Scripts\
         <virtual environment files>
@@ -42,7 +45,7 @@ The -Dashboard- page is only accessable if a user has logged into the session. T
       config.py 
       db.migrate.py #Updates DB
       
-#CURRENT DATA TABLES
+##CURRENT DATA TABLES
       
     DB Models:
       TABLES:
