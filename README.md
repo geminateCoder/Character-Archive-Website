@@ -18,7 +18,7 @@ A website designed to save multiple characters at once, give them a profile, and
 ##Pages: 
 * The *Index* page should have a header with a login and sign up button on floating to the left of the screen. There needs to be a section where it will display recent characters with links that will display once a user hovers over the character image. Login and Signup buttons pops out on the page.
 
-* The *Login* and -Signup- page will be made just as a procaution. Login Form should only have username and password. Sighn up Form should have username, email, password, and confim password.
+* The *Login* and *Signup* page will be made just as a procaution. Login Form should only have username and password. Sighn up Form should have username, email, password, and confim password.
 
 * The *Dashboard* page is only accessable if a user has logged into the session. There will be their image on the right of the screen. There should be a notification/character/recent characters/favorted/stats/friend-followed/news section on the dashboard. The header should change if user is in session to a small avatar image with a dropdown that will have the settings page and the logout link.
 
