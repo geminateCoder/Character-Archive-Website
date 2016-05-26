@@ -12,10 +12,6 @@ def load_user(id):
 @app.before_request
 def before_request():
     g.user = current_user
-
-@app.before_request
-def before_request():
-    g.user = current_user
     if g.user.is_authenticated:
         g.user.last_login_at = datetime.utcnow()
         db.session.add(g.user)
@@ -39,6 +35,9 @@ def login():
             user = User.query.filter_by(username=request.form['username']).first()
             if user is not None and user.password == request.form['password']:
                 session['remember_me'] = form.remember_me.data
+                user.login_count = user.login_count +1
+                user.current_login_at = datetime.now()
+                user.current_login_ip = request.remote_addr
                 db.session.commit()
                 login_user(user)
                 return redirect(url_for('index'))
@@ -77,30 +76,4 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
-@app.route("/profile/<username>", methods=['GET','POST'])
-@login_required
-def profile(username):
-    pageType='profile'
-    user = User.query.filter_by(username=username).first()
-    if user == None:
-        flash('User %s not found.' % username)
-        return redirect(url_for('index'))
-    return render_template('user.html',
-                           user=user)
-
-@app.route('/settings', methods=['GET', 'POST'])
-@login_required
-def edit():
-    form = EditForm()
-    if form.validate_on_submit():
-        g.user.nickname = form.nickname.data
-        g.user.about_me = form.about_me.data
-        db.session.add(g.user)
-        db.session.commit()
-        flash('Your changes have been saved.')
-        return redirect(url_for('edit'))
-    else:
-        form.nickname.data = g.user.nickname
-        form.about_me.data = g.user.about_me
-    return render_template('edit.html', form=form)
 
