@@ -1,0 +1,33 @@
+{% extends "main_skeleton.html" %}
+{% block content %}
+{% if page=='original' %}
+<form method="post">
+  <fieldset>
+  {{ form.csrf_token }}
+    {{ form.firstname(placeholder="firstname") }}
+      {% if form.firstname.errors %}
+        {% for error in form.firstname.errors %}
+          {{ error }}
+        {% endfor %}
+      {% endif %}
+    {{ form.lastname(placeholder="lastname") }}
+      {% if form.lastname.errors %}
+        {% for error in form.lastname.errors %}
+          {{ error }}
+        {% endfor %}
+      {% endif %}
+  {{ form.img(placeholder="ImageUrl") }}
+      {% if form.img.errors %}
+        {% for error in form.img.errors %}
+          {{ error }}
+        {% endfor %}
+      {% endif %}
+
+  </fieldset>
+  <input name="submit" type="submit" value="Create" /></form>
+<br />
+{% endif %}
+
+
+
+{% endblock %}

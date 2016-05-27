@@ -13,11 +13,11 @@ class EditForm(Form):
 
 
 class RegisterForm(Form):
-    username = TextField(
+    username = StringField(
         'username',
         validators=[DataRequired(), Length(min=3, max=25)]
     )
-    email = TextField(
+    email = StringField(
         'email',
         validators=[DataRequired(), Email(message=None), Length(min=6, max=40)]
     )
@@ -30,4 +30,18 @@ class RegisterForm(Form):
         validators=[
             DataRequired(), EqualTo('password', message='Passwords must match.')
         ]
+    )
+
+
+class CreateC(Form):
+    firstname = TextField(
+        'First Name',
+        validators=[Length(min=3, max=25)]
+    )
+    lastname = TextField(
+        'Last Name',
+        validators=[Length(min=3, max=25)]
+    )
+    img = TextField(
+        'Image Url', validators = [Optional(), Length(max = 100)], filters = [lambda x: x or None]
     )

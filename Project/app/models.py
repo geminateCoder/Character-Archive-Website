@@ -14,6 +14,8 @@ follow = db.Table('follow',
     db.Column('following_id', db.Integer, db.ForeignKey('user.id'))
 )
 
+
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer(), primary_key=True)
     username = db.Column(db.String(255), unique=True)
@@ -95,7 +97,7 @@ class Character(db.Model):
     person = db.Column(db.Text(length=None))
     appear = db.Column(db.Text(length=None))
     about = db.Column(db.Text(length=None))
-    original = db.Column(db.Boolean, unique=False, default=1)
+    headcanon = db.Column(db.Text(length=None))
     fandom = db.Column(db.String(255))
     theme = db.Column(db.String(255))
     url = db.Column(db.String(255))
@@ -103,6 +105,9 @@ class Character(db.Model):
     favorited = db.relationship('User', secondary=favorite,
         backref=db.backref('favorite'))
     created = db.Column(db.DateTime())
+
+
+
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
